@@ -1,18 +1,16 @@
 /**
+ * E32-TTL Transceiver Interface
+ *
+ * @author Pasakorn Tiwatthanont, AKA. iPAS.
+ * @date 8 May 2017
+ *
  * This code is adopted from:
- * http://spacetinkerer.blogspot.com/2011/02/serial-port-echo-with-arduino.html.
+ * @see http://spacetinkerer.blogspot.com/2011/02/serial-port-echo-with-arduino.html, and
+ * @see https://github.com/tienfuc/E32-TTL.
  *
  * If you need a soft serial (UART) function, please follow
- * http://www.arduino.cc/en/Tutorial/SoftwareSerialExample.
- *
- * E32-TTL module interfacing --> a example for this work
- * https://github.com/tienfuc/E32-TTL.
+ * @see http://www.arduino.cc/en/Tutorial/SoftwareSerialExample.
  */
-
-
-/*********************************
- * E32-TTL Transceiver Interface *
- *********************************/
 
 #include <SoftwareSerial.h>
 
