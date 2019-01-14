@@ -12,70 +12,60 @@
  * @see http://www.arduino.cc/en/Tutorial/SoftwareSerialExample.
  */
 
-#include <SoftwareSerial.h>
-
-#define M0      7
-#define M1      8
-#define AUX     12
-
-#define SOFT_RX 10
-#define SOFT_TX 11
-SoftwareSerial softSerial(SOFT_RX, SOFT_TX);  // RX, TX
-
 #define MAX_TX_SIZE 58
 //#define MAX_TX_SIZE 36
-#include "Queue.h":
+#include "Queue.h"
 Queue<char> queue(MAX_TX_SIZE * 3);
 
+#include "e32.h"
 
+// -------------------------------------------------------------------
 // The setup function runs once when you press reset or power the board
 void setup() {
-  pinMode(M0, OUTPUT);
-  pinMode(M1, OUTPUT);
-  pinMode(AUX, INPUT);
-
-  pinMode(SOFT_RX, INPUT);
-  pinMode(SOFT_TX, OUTPUT);
-
-  Serial.begin(9600);
-  softSerial.begin(9600);
-
-  // Mode 0 | normal operation
-  digitalWrite(M0, LOW);
-  digitalWrite(M1, LOW);
+  setup_e32(); 
 }
 
-
+// -------------------------------------------------------------------
 // The loop function runs over and over again forever
 void loop() {
 
   if (softSerial.available()) {
-    while (softSerial.available())
-      queue.push(softSerial.read());
+    while (softSerial.available()) {
+      char c = softSerial.read();
+      queue.push(c);
+      Serial.print(c, HEX);
+      Serial.print(' ');      
+    }
 
-    Serial.print("Queue: ");
-    Serial.print(queue.count(), DEC);
-    Serial.println(" bytes");
+    Serial.print("> ");
+    Serial.println(queue.count(), DEC);
   }
 
   if (queue.count() > 0 && digitalRead(AUX)) {
     char c;
     static char s[MAX_TX_SIZE];
     static int cnt = 0;
-
+    
     do {
       char c = queue.pop();  // The oldest
       s[cnt++] = c;
 
-      if (cnt == MAX_TX_SIZE || c == '\n') {
-        softSerial.write(s, cnt);
+      if (cnt >= MAX_TX_SIZE || c == '\n') {
+        //softSerial.write(s, cnt);
+        int i;
+        for (i = 0; i < cnt; i++) {
+          delayMicroseconds(1);
+          softSerial.write(s[i]);
+        }
 
         Serial.write(s, cnt);  // Display
         if (c != '\n' && c != '\r')  // Add 'newline'
           Serial.println();
-        Serial.print("Send: ");
+        Serial.print("Send ");
         Serial.print(cnt);
         Serial.println(" bytes.");
+        Serial.println();
+        
         cnt = 0;
         break;
       }
@@ -83,4 +73,3 @@ void loop() {
 
   }
 }
-
