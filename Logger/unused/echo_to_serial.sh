@@ -1,0 +1,1 @@
+/home/ipas/Script/echo_to_serial.sh

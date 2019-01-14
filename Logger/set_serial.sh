@@ -1,0 +1,1 @@
+/home/ipas/Script/set_serial.sh
